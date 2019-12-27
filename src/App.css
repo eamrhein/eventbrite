@@ -1,38 +1,44 @@
-.App {
+@import "../node_modules/bootstrap/dist/css/bootstrap.css";
+body {
+  background-color: lightsteelblue;
+}
+main {
+  border-radius: 0.5rem;
+  padding: 2rem;
+  background-color: whitesmoke;
+  margin: 6rem;
+}
+.datetime {
+  display: block;
+}
+.img-upload {
+  border: 1px solid #dbdae3;
   text-align: center;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: lightgray;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.img-upload-inner {
+  border: 2px dashed #dbdae3;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.img-upload-inner:hover {
+  color: cornflowerblue;
+  border: 2px dashed cornflowerblue;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+img {
+  max-width: 100%;
+  max-height: 300px;
+  display: block;
 }

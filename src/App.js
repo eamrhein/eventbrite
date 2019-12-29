@@ -4,24 +4,34 @@ import "./App.css";
 import { Form, Container, Row, Col, Button } from "react-bootstrap";
 import * as apiutil from "./apiutil";
 import * as timeUtil from "./timeUtil";
-
+import * as validationUtil from "./valdiationUtil";
+// let formData = {
+//   name: {
+//     html: ""
+//   },
+//   start: {
+//     timezone: "America/Los_Angeles",
+//     utc: dateStart.toJSON()
+//   },
+//   end: {
+//     timezone: "America/Los_Angeles",
+//     utc: dateStart.toJSON()
+//   },
+//   currency: "USD"
+// };
 function App() {
   // State Setters and getters
-  const [event, setEvent] = useState({
-    name: {
-      html: ""
-    },
-    start: {
-      timezone: "America/Los_Angeles",
-      utc: new Date().toISOString()
-    },
-    end: {
-      timezone: "America/Los_Angeles",
-      utc: new Date().toISOString()
-    },
-    currency: "USD"
-  });
+  const [dateStart, setDateStart] = useState(timeUtil.roundDate(new Date(), 0));
+  const [dateEnd, setDateEnd] = useState(timeUtil.roundDate(new Date(), 1));
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [imgurl, setImgurl] = useState(null);
+  const [organizer, setOrganizer] = useState("");
+  const [orgDesc, setOrgDesc] = useState("");
+  const [ticketName, setTicketName] = useState("");
+  const [numberOfTickets, setNumberOfTickets] = useState(100);
+  const [price, setPrice] = useState(0);
+
   const [validationSchema, setValidationSchema] = useState({
     title: {
       valid: null,
@@ -34,55 +44,91 @@ function App() {
     image: {
       valid: null,
       invalid: null
+    },
+    organizer: {
+      valid: null,
+      invalid: null
+    },
+    ticketName: {
+      valid: null,
+      invalid: null
     }
   });
+  const setValidity = (bool, key) => {
+    if (bool) {
+      setValidationSchema({
+        ...validationSchema,
+        [key]: {
+          valid: bool
+        }
+      });
+    } else {
+      setValidationSchema({
+        ...validationSchema,
+        [key]: {
+          invalid: bool
+        }
+      });
+    }
+  };
 
   // Change Handlers
   const handleFrom = e => {
-    if (e.currentTarget.value) {
-      setEvent({
-        ...event,
-        start: {
-          timezone: event.start.timezone,
-          utc: new Date(e.currentTarget.value).toISOString()
-        }
-      });
-    }
-  };
-  const handleUntil = e => {
-    if (e.currentTarget.value) {
-      setEvent({
-        ...event,
-        end: {
-          timezone: event.end.timezone,
-          utc: new Date(e.currentTarget.value).toISOString()
-        }
-      });
-    }
+    let newDate =
+      e.target.name === "time"
+        ? timeUtil.appendTime(dateStart, e.target.value)
+        : timeUtil.appendDate(dateStart, e.target.value);
+    validationUtil.isValidTime(newDate, dateEnd)
+      ? setValidity(true, "date")
+      : setValidity(false, "date");
+    setDateStart(newDate);
   };
 
-  const handleTitle = e => {
-    if (e.currentTarget.value.length < 70 && e.currentTarget.value.length > 0) {
-      setValidationSchema({
-        ...validationSchema,
-        title: {
-          valid: true
-        }
-      });
-    } else if (e.currentTarget.value.length === 0) {
-      setValidationSchema({
-        ...validationSchema,
-        title: {
-          invalid: true
-        }
-      });
+  const handleUntil = e => {
+    let newDate =
+      e.target.name === "time"
+        ? timeUtil.appendTime(dateEnd, e.target.value)
+        : timeUtil.appendDate(dateEnd, e.target.value);
+    validationUtil.isValidTime(dateStart, newDate)
+      ? setValidity(true, "date")
+      : setValidity(false, "date");
+    setDateEnd(newDate);
+  };
+
+  const handleInputs = e => {
+    switch (e.target.name) {
+      case "title":
+        validationUtil.checkCharLimit(e.target.value, 70)
+          ? setValidity(true, "title")
+          : setValidity(false, "title");
+        setTitle(e.target.value);
+        break;
+      case "organizer":
+        validationUtil.checkCharLimit(e.target.value, 70)
+          ? setValidity(true, "organizer")
+          : setValidity(false, "organizer");
+        setOrganizer(e.target.value);
+        break;
+      case "ticketName":
+        validationUtil.checkCharLimit(e.target.value, 70)
+          ? setValidity(true, "ticketName")
+          : setValidity(false, "ticketName");
+        setTicketName(e.target.value);
+        break;
+      case "description":
+        setDescription(e.target.value);
+        break;
+      case "numberOfTickets":
+        setNumberOfTickets(e.target.value);
+        break;
+      case "orgDesc":
+        setOrgDesc(e.target.value);
+      case "price":
+        setPrice(e.target.value);
+        break;
+      default:
+        break;
     }
-    setEvent({
-      ...event,
-      name: {
-        html: e.currentTarget.value
-      }
-    });
   };
 
   //Sumbit Handling
@@ -121,7 +167,7 @@ function App() {
       });
     }
   };
-
+  console.log(ticketName);
   return (
     <main>
       <Container>
@@ -143,11 +189,12 @@ function App() {
                 <Form.Control
                   isInvalid={validationSchema.title.invalid}
                   isValid={validationSchema.title.valid}
+                  name="title"
                   type="text"
                   maxLength="70"
                   placeholder="Give it a short distinct name"
-                  value={event.name.html}
-                  onChange={handleTitle}
+                  value={title}
+                  onChange={handleInputs}
                 />
                 <Form.Control.Feedback type="valid">
                   Looks Good
@@ -181,7 +228,15 @@ function App() {
                 <Row>
                   <Col>
                     <Form.Label>From</Form.Label>
-                    <Form.Control required isInvalid={true} as="select">
+                    <Form.Control
+                      required
+                      name="time"
+                      value={timeUtil.parse12htime(dateStart)}
+                      isInvalid={validationSchema.date.invalid}
+                      isValid={validationSchema.date.valid}
+                      as="select"
+                      onChange={handleFrom}
+                    >
                       {timeUtil.timeOfDay()}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
@@ -190,7 +245,16 @@ function App() {
                   </Col>
                   <Col>
                     <Form.Label>To</Form.Label>
-                    <Form.Control isInvalid={true} as="select">
+                    <Form.Control
+                      required
+                      name="time"
+                      value={timeUtil.parse12htime(dateEnd)}
+                      isInvalid={true}
+                      as="select"
+                      onChange={handleUntil}
+                      isInvalid={validationSchema.date.invalid}
+                      isValid={validationSchema.date.valid}
+                    >
                       {timeUtil.timeOfDay()}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
@@ -204,10 +268,16 @@ function App() {
                   <Col>
                     <Form.Label>Occurs From</Form.Label>
                     <Form.Control
+                      name="date"
                       isInvalid={true}
                       type="date"
+                      min={timeUtil.parseDate(
+                        timeUtil.roundDate(new Date(), 0)
+                      )}
                       onChange={handleFrom}
-                      value={event.start.utc.slice(0, 10)}
+                      value={timeUtil.parseDate(dateStart)}
+                      isInvalid={validationSchema.date.invalid}
+                      isValid={validationSchema.date.valid}
                     />
                     <Form.Control.Feedback type="invalid">
                       Must be before end date.
@@ -217,9 +287,15 @@ function App() {
                     <Form.Label>Occurs Until</Form.Label>
                     <Form.Control
                       isInvalid={true}
+                      name="date"
                       type="date"
                       onChange={handleUntil}
-                      value={event.end.utc.slice(0, 10)}
+                      min={timeUtil.parseDate(
+                        timeUtil.roundDate(new Date(), 1)
+                      )}
+                      value={timeUtil.parseDate(dateEnd)}
+                      isInvalid={validationSchema.date.invalid}
+                      isValid={validationSchema.date.valid}
                     />
                     <Form.Control.Feedback type="invalid">
                       Must be after start date.
@@ -264,18 +340,37 @@ function App() {
               </Form.Group>
               <Form.Group>
                 <Form.Label>Event Description</Form.Label>
-                <Form.Control as="textarea" rows="4" />
+                <Form.Control
+                  as="textarea"
+                  rows="4"
+                  name="description"
+                  onChange={handleInputs}
+                  value={description}
+                />
               </Form.Group>
               <Form.Group>
                 <Form.Label>Organizer Name</Form.Label>
                 <Form.Control
                   type="text"
+                  name="organizer"
+                  value={organizer}
+                  onChange={handleInputs}
+                  isValid={validationSchema.organizer.valid}
+                  isInvalid={validationSchema.organizer.invalid}
                   placeholder="Who is Organising this event?"
                 />
+                <Form.Control.Feedback type="invalid">
+                  Must be under 70 characters
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group>
                 <Form.Label>Organizer Description</Form.Label>
-                <Form.Control as="textarea" />
+                <Form.Control
+                  as="textarea"
+                  name="orgDesc"
+                  value={orgDesc}
+                  onChange={handleInputs}
+                />
               </Form.Group>
               <Form.Group>
                 <Row>
@@ -285,6 +380,9 @@ function App() {
                       required
                       isInvalid={true}
                       type="text"
+                      value={ticketName}
+                      name="ticketName"
+                      onChange={handleInputs}
                       placeholder="Ticket Name"
                     />
                     <Form.Control.Feedback type="invalid">
@@ -294,6 +392,9 @@ function App() {
                   <Col>
                     <Form.Label>Quantity Available</Form.Label>
                     <Form.Control
+                      value={numberOfTickets}
+                      name="numberOfTickets"
+                      onChange={handleInputs}
                       isInvalid={true}
                       type="number"
                       placeholder="100"

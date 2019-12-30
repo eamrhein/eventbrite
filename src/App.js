@@ -1,24 +1,11 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { Form, Container, Row, Col, Button } from "react-bootstrap";
+import { Form, Container, Row, Col, Button, Alert } from "react-bootstrap";
 import * as apiutil from "./apiutil";
 import * as timeUtil from "./timeUtil";
 import * as validationUtil from "./valdiationUtil";
-// let formData = {
-//   name: {
-//     html: ""
-//   },
-//   start: {
-//     timezone: "America/Los_Angeles",
-//     utc: dateStart.toJSON()
-//   },
-//   end: {
-//     timezone: "America/Los_Angeles",
-//     utc: dateStart.toJSON()
-//   },
-//   currency: "USD"
-// };
+
 function App() {
   // State Setters and getters
   const [dateStart, setDateStart] = useState(timeUtil.roundDate(new Date(), 0));
@@ -26,34 +13,17 @@ function App() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imgurl, setImgurl] = useState(null);
+  const [imgid, setImgid] = useState(null);
   const [organizer, setOrganizer] = useState("");
   const [orgDesc, setOrgDesc] = useState("");
   const [ticketName, setTicketName] = useState("");
   const [numberOfTickets, setNumberOfTickets] = useState(100);
   const [price, setPrice] = useState(0);
-
-  const [validationSchema, setValidationSchema] = useState({
-    title: {
-      valid: null,
-      invalid: null
-    },
-    date: {
-      valid: null,
-      invalid: null
-    },
-    image: {
-      valid: null,
-      invalid: null
-    },
-    organizer: {
-      valid: null,
-      invalid: null
-    },
-    ticketName: {
-      valid: null,
-      invalid: null
-    }
-  });
+  const [validationSchema, setValidationSchema] = useState(
+    validationUtil.validationSchema
+  );
+  const [eventurl, setEventurl] = useState(null);
+  //Function to set an input to valid or invalid
   const setValidity = (bool, key) => {
     if (bool) {
       setValidationSchema({
@@ -66,7 +36,7 @@ function App() {
       setValidationSchema({
         ...validationSchema,
         [key]: {
-          invalid: bool
+          invalid: !bool
         }
       });
     }
@@ -95,10 +65,13 @@ function App() {
     setDateEnd(newDate);
   };
 
+  //input handler validates and sets inputs on change
+  // switch statement based on the name of the element
   const handleInputs = e => {
     switch (e.target.name) {
       case "title":
-        validationUtil.checkCharLimit(e.target.value, 70)
+        validationUtil.checkCharLimit(e.target.value, 70) &&
+        e.target.value.length > 0
           ? setValidity(true, "title")
           : setValidity(false, "title");
         setTitle(e.target.value);
@@ -110,7 +83,8 @@ function App() {
         setOrganizer(e.target.value);
         break;
       case "ticketName":
-        validationUtil.checkCharLimit(e.target.value, 70)
+        validationUtil.checkCharLimit(e.target.value, 70) &&
+        e.target.value.length > 0
           ? setValidity(true, "ticketName")
           : setValidity(false, "ticketName");
         setTicketName(e.target.value);
@@ -123,6 +97,7 @@ function App() {
         break;
       case "orgDesc":
         setOrgDesc(e.target.value);
+        break;
       case "price":
         setPrice(e.target.value);
         break;
@@ -140,10 +115,27 @@ function App() {
   //
   const handleSubmit = e => {
     e.preventDefault();
-    const form = e.currentTarget;
-    console.log(form);
-    if (form.checkValidity() === false) {
+    const validKeys = key => {
+      let value = validationSchema[key].valid;
+      return value === true || value === null;
+    };
+    const keys = Object.keys(validationSchema);
+    if (keys.every(validKeys)) {
       e.stopPropagation();
+      console.log(dateStart.toJSON().slice(0, 19) + ":00Z");
+      let eventPackage = validationUtil.parseEvent(
+        title,
+        description,
+        dateStart,
+        dateEnd,
+        imgid
+      );
+      apiutil.createEvent(eventPackage).then(res => {
+        console.log(res);
+        setEventurl(res.url);
+      });
+    } else {
+      console.log("invalid");
     }
   };
 
@@ -162,12 +154,13 @@ function App() {
           .uploadImage(img, res.upload_url, res.upload_data)
           .then(() => apiutil.getUploadedUrl(res.upload_token))
           .then(res => {
+            setImgid(res.id);
             setImgurl(res.url);
           });
       });
     }
   };
-  console.log(ticketName);
+
   return (
     <main>
       <Container>
@@ -183,10 +176,11 @@ function App() {
         </Row>
         <Row>
           <Col>
-            <Form noValidate onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
               <Form.Group>
                 <Form.Label>Title</Form.Label>
                 <Form.Control
+                  required
                   isInvalid={validationSchema.title.invalid}
                   isValid={validationSchema.title.valid}
                   name="title"
@@ -249,7 +243,6 @@ function App() {
                       required
                       name="time"
                       value={timeUtil.parse12htime(dateEnd)}
-                      isInvalid={true}
                       as="select"
                       onChange={handleUntil}
                       isInvalid={validationSchema.date.invalid}
@@ -269,7 +262,6 @@ function App() {
                     <Form.Label>Occurs From</Form.Label>
                     <Form.Control
                       name="date"
-                      isInvalid={true}
                       type="date"
                       min={timeUtil.parseDate(
                         timeUtil.roundDate(new Date(), 0)
@@ -286,7 +278,6 @@ function App() {
                   <Col>
                     <Form.Label>Occurs Until</Form.Label>
                     <Form.Control
-                      isInvalid={true}
                       name="date"
                       type="date"
                       onChange={handleUntil}
@@ -378,12 +369,13 @@ function App() {
                     <Form.Label>Ticket Name</Form.Label>
                     <Form.Control
                       required
-                      isInvalid={true}
                       type="text"
                       value={ticketName}
                       name="ticketName"
                       onChange={handleInputs}
                       placeholder="Ticket Name"
+                      isValid={validationSchema.ticketName.valid}
+                      isInvalid={validationSchema.ticketName.invalid}
                     />
                     <Form.Control.Feedback type="invalid">
                       Ticket name is required.
@@ -393,14 +385,15 @@ function App() {
                     <Form.Label>Quantity Available</Form.Label>
                     <Form.Control
                       value={numberOfTickets}
+                      min="1"
+                      max="30000"
                       name="numberOfTickets"
                       onChange={handleInputs}
-                      isInvalid={true}
                       type="number"
                       placeholder="100"
                     />
                     <Form.Control.Feedback type="invalid">
-                      Must be greater than zero.
+                      Must have one or more tickets.
                     </Form.Control.Feedback>
                   </Col>
                   <Col>
@@ -411,6 +404,9 @@ function App() {
                       max="10000.00"
                       step="0.01"
                       placeholder="Free"
+                      name="price"
+                      value={price}
+                      onChange={handleInputs}
                     />
                     <Form.Control.Feedback type="invalid">
                       Must be a postitive number that is less than 10000
@@ -425,6 +421,18 @@ function App() {
           </Col>
         </Row>
       </Container>
+      <Row>
+        <Col>
+          {eventurl ? (
+            <Alert className="eventlist" variant="secondary">
+              <h4>List of Events</h4>
+              <a href={eventurl}>{eventurl}</a>
+            </Alert>
+          ) : (
+            ""
+          )}
+        </Col>
+      </Row>
     </main>
   );
 }

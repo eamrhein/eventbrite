@@ -1,7 +1,7 @@
 import apikey from "./token";
 
-export function createEvent(data) {
-  fetch(
+export async function createEvent(data) {
+  const res = await fetch(
     `https://www.eventbriteapi.com/v3/organizations/64592771355/events/?token=${apikey}`,
     {
       method: "post",
@@ -10,13 +10,9 @@ export function createEvent(data) {
         "Content-Type": "application/json"
       }
     }
-  )
-    .then(function(response) {
-      return response.json();
-    })
-    .then(function(data) {
-      console.log(data);
-    });
+  );
+  const resData = await res.json();
+  return resData;
 }
 
 export async function getUploadSignature() {

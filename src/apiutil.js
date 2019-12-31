@@ -15,6 +15,81 @@ export async function createEvent(data) {
   return resData;
 }
 
+export async function createSeries(id, occurrence_duration, recurrence_rule) {
+  const res = await fetch(
+    `https://www.eventbriteapi.com/v3/events/${id}/schedules/?token=${apikey}`,
+    {
+      method: "post",
+      body: JSON.stringify({
+        schedule: {
+          occurrence_duration,
+          recurrence_rule
+        }
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  let data = await res.json();
+  console.log(data);
+  return data;
+}
+
+export async function createTicket(id, cost, count, name) {
+  let res;
+  if (cost === 0) {
+    res = await fetch(
+      ` https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/?token=${apikey}`,
+      {
+        method: "post",
+        body: JSON.stringify({
+          ticket_class: {
+            name,
+            quantity_total: count,
+            free: true
+          }
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  } else {
+    res = await fetch(
+      ` https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/?token=${apikey}`,
+      {
+        method: "post",
+        body: JSON.stringify({
+          ticket_class: {
+            name,
+            quantity_total: count,
+            cost: `USD, ${cost}`
+          }
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  }
+  let data = await res.json();
+  console.log(data);
+  return data;
+}
+
+export async function publishEvent(id) {
+  const res = await fetch(
+    `https://www.eventbriteapi.com/v3/events/${id}/publish/?token=${apikey}`,
+    {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  return await res.json();
+}
 export async function getUploadSignature() {
   const fetchToken = await fetch(
     `https://www.eventbriteapi.com/v3/media/upload/?type=image-event-logo&token=${apikey}`

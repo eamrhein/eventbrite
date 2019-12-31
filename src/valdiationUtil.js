@@ -1,5 +1,3 @@
-import { dayOfWeek } from "./timeUtil";
-
 export const isValidTime = (start, end) => {
   return Date.parse(start) >= Date.parse(end) ? false : true;
 };

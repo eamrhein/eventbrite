@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { Form, Container, Row, Col, Button, Alert } from "react-bootstrap";
+import {
+  Form,
+  Container,
+  Row,
+  Col,
+  Button,
+  Alert,
+  Image
+} from "react-bootstrap";
 import * as apiutil from "./apiutil";
 import * as timeUtil from "./timeUtil";
 import * as validationUtil from "./valdiationUtil";
@@ -9,13 +17,16 @@ import * as validationUtil from "./valdiationUtil";
 function App() {
   // State Setters and getters
   const [dateStart, setDateStart] = useState(timeUtil.roundDate(new Date(), 0));
+  const [dateStartEndTime, setStartDateEndTime] = useState(
+    timeUtil.roundDate(new Date(), 1)
+  );
   const [dateEnd, setDateEnd] = useState(timeUtil.roundDate(new Date(), 1));
+  const [occurences, setOccurences] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imgurl, setImgurl] = useState(null);
   const [imgid, setImgid] = useState(null);
-  const [organizer, setOrganizer] = useState("");
-  const [orgDesc, setOrgDesc] = useState("");
   const [ticketName, setTicketName] = useState("");
   const [numberOfTickets, setNumberOfTickets] = useState(100);
   const [price, setPrice] = useState(0);
@@ -42,32 +53,26 @@ function App() {
     }
   };
 
-  // Change Handlers
-  const handleFrom = e => {
-    let newDate =
-      e.target.name === "time"
-        ? timeUtil.appendTime(dateStart, e.target.value)
-        : timeUtil.appendDate(dateStart, e.target.value);
-    validationUtil.isValidTime(newDate, dateEnd)
-      ? setValidity(true, "date")
-      : setValidity(false, "date");
-    setDateStart(newDate);
+  const createDays = (start, end) => {
+    let dates = [];
+    let curr = start;
+    let addDays = function(days) {
+      let date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+    };
+    while (curr <= end) {
+      dates.push(curr);
+      curr = addDays.call(curr, 7);
+    }
+    return dates.length;
   };
-
-  const handleUntil = e => {
-    let newDate =
-      e.target.name === "time"
-        ? timeUtil.appendTime(dateEnd, e.target.value)
-        : timeUtil.appendDate(dateEnd, e.target.value);
-    validationUtil.isValidTime(dateStart, newDate)
-      ? setValidity(true, "date")
-      : setValidity(false, "date");
-    setDateEnd(newDate);
-  };
-
   //input handler validates and sets inputs on change
   // switch statement based on the name of the element
   const handleInputs = e => {
+    let time;
+    let days;
+    let endtime;
     switch (e.target.name) {
       case "title":
         validationUtil.checkCharLimit(e.target.value, 70) &&
@@ -76,12 +81,6 @@ function App() {
           : setValidity(false, "title");
         setTitle(e.target.value);
         break;
-      case "organizer":
-        validationUtil.checkCharLimit(e.target.value, 70)
-          ? setValidity(true, "organizer")
-          : setValidity(false, "organizer");
-        setOrganizer(e.target.value);
-        break;
       case "ticketName":
         validationUtil.checkCharLimit(e.target.value, 70) &&
         e.target.value.length > 0
@@ -89,14 +88,47 @@ function App() {
           : setValidity(false, "ticketName");
         setTicketName(e.target.value);
         break;
+      case "from":
+        time = timeUtil.appendTime(dateStart, e.target.value);
+        validationUtil.isValidTime(time, dateEnd)
+          ? setValidity(true, "date")
+          : setValidity(false, "date");
+        setDateStart(time);
+        setDuration(timeUtil.calcDuration(time, dateStartEndTime));
+        break;
+      case "to":
+        time = timeUtil.appendTime(dateEnd, e.target.value);
+        endtime = timeUtil.appendTime(dateStartEndTime, e.target.value);
+        validationUtil.isValidTime(dateStart, time)
+          ? setValidity(true, "date")
+          : setValidity(false, "date");
+        setDateEnd(time);
+        setStartDateEndTime(endtime);
+        setDuration(timeUtil.calcDuration(dateStart, endtime));
+        break;
+      case "occursFrom":
+        time = timeUtil.createDate(dateStart, e.target.value);
+        validationUtil.isValidTime(time, dateEnd)
+          ? setValidity(true, "date")
+          : setValidity(false, "date");
+        setDateStart(time);
+        days = createDays(time, dateEnd);
+        setOccurences(days);
+        break;
+      case "occursUntil":
+        time = timeUtil.createDate(dateEnd, e.target.value);
+        validationUtil.isValidTime(dateStart, time)
+          ? setValidity(true, "date")
+          : setValidity(false, "date");
+        setDateEnd(time);
+        days = createDays(dateStart, time);
+        setOccurences(days);
+        break;
       case "description":
         setDescription(e.target.value);
         break;
       case "numberOfTickets":
         setNumberOfTickets(e.target.value);
-        break;
-      case "orgDesc":
-        setOrgDesc(e.target.value);
         break;
       case "price":
         setPrice(e.target.value);
@@ -122,18 +154,39 @@ function App() {
     const keys = Object.keys(validationSchema);
     if (keys.every(validKeys)) {
       e.stopPropagation();
-      console.log(dateStart.toJSON().slice(0, 19) + ":00Z");
       let eventPackage = validationUtil.parseEvent(
         title,
         description,
-        dateStart,
+        dateStartEndTime,
         dateEnd,
         imgid
       );
-      apiutil.createEvent(eventPackage).then(res => {
-        console.log(res);
-        setEventurl(res.url);
-      });
+      try {
+        apiutil
+          .createEvent(eventPackage)
+          .then(res => {
+            setEventurl(res.url);
+            console.log(res)
+            return res;
+          })
+          .then(parent => {
+            if (occurences > 1) {
+              let rule = `DTSTART:${dateStart.toJSON()}\nRRULE:FREQ=WEEKLY;COUNT=${occurences}
+              `;
+              apiutil.createSeries(parent.id, duration, rule);
+            }
+            return parent;
+          })
+          .then(parent => {
+            apiutil.createTicket(parent.id, price, numberOfTickets, ticketName);
+            return parent;
+          })
+          .then(parent => {
+            apiutil.publishEvent(parent.id);
+          });
+      } catch (err) {
+        console.log(err.message);
+      }
     } else {
       console.log("invalid");
     }
@@ -160,7 +213,6 @@ function App() {
       });
     }
   };
-
   return (
     <main>
       <Container>
@@ -210,12 +262,6 @@ function App() {
                     <Form.Label>How Often?</Form.Label>
                     <Form.Control disabled defaultValue="Weekly" />
                   </Col>
-                  <Col>
-                    <Form.Label>What day of the week?</Form.Label>
-                    <Form.Control as="select">
-                      {timeUtil.dayOfWeek()}
-                    </Form.Control>
-                  </Col>
                 </Row>
               </Form.Group>
               <Form.Group>
@@ -224,12 +270,12 @@ function App() {
                     <Form.Label>From</Form.Label>
                     <Form.Control
                       required
-                      name="time"
+                      name="from"
+                      onChange={handleInputs}
                       value={timeUtil.parse12htime(dateStart)}
                       isInvalid={validationSchema.date.invalid}
                       isValid={validationSchema.date.valid}
                       as="select"
-                      onChange={handleFrom}
                     >
                       {timeUtil.timeOfDay()}
                     </Form.Control>
@@ -241,10 +287,10 @@ function App() {
                     <Form.Label>To</Form.Label>
                     <Form.Control
                       required
-                      name="time"
+                      name="to"
+                      onChange={handleInputs}
                       value={timeUtil.parse12htime(dateEnd)}
                       as="select"
-                      onChange={handleUntil}
                       isInvalid={validationSchema.date.invalid}
                       isValid={validationSchema.date.valid}
                     >
@@ -255,18 +301,29 @@ function App() {
                     </Form.Control.Feedback>
                   </Col>
                 </Row>
+                <Row>
+                  <Col>
+                    {duration > 0 ? (
+                      <Alert className="eventlist" variant="success">
+                        Duration of {duration / 60} Minutes
+                      </Alert>
+                    ) : (
+                      ""
+                    )}
+                  </Col>
+                </Row>
               </Form.Group>
               <Form.Group>
                 <Row>
                   <Col>
                     <Form.Label>Occurs From</Form.Label>
                     <Form.Control
-                      name="date"
+                      name="occursFrom"
                       type="date"
                       min={timeUtil.parseDate(
                         timeUtil.roundDate(new Date(), 0)
                       )}
-                      onChange={handleFrom}
+                      onChange={handleInputs}
                       value={timeUtil.parseDate(dateStart)}
                       isInvalid={validationSchema.date.invalid}
                       isValid={validationSchema.date.valid}
@@ -278,9 +335,9 @@ function App() {
                   <Col>
                     <Form.Label>Occurs Until</Form.Label>
                     <Form.Control
-                      name="date"
+                      name="occursUntil"
                       type="date"
-                      onChange={handleUntil}
+                      onChange={handleInputs}
                       min={timeUtil.parseDate(
                         timeUtil.roundDate(new Date(), 1)
                       )}
@@ -291,6 +348,17 @@ function App() {
                     <Form.Control.Feedback type="invalid">
                       Must be after start date.
                     </Form.Control.Feedback>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {occurences > 0 ? (
+                      <Alert className="eventlist" variant="success">
+                        {occurences} Events
+                      </Alert>
+                    ) : (
+                      ""
+                    )}
                   </Col>
                 </Row>
               </Form.Group>
@@ -309,7 +377,7 @@ function App() {
                       />
                       <Form.Label htmlFor="file">
                         {imgurl ? (
-                          <img alt="banner" src={imgurl} />
+                          <Image alt="banner" src={imgurl} fluid />
                         ) : (
                           <div>
                             {" "}
@@ -337,30 +405,6 @@ function App() {
                   name="description"
                   onChange={handleInputs}
                   value={description}
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Organizer Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="organizer"
-                  value={organizer}
-                  onChange={handleInputs}
-                  isValid={validationSchema.organizer.valid}
-                  isInvalid={validationSchema.organizer.invalid}
-                  placeholder="Who is Organising this event?"
-                />
-                <Form.Control.Feedback type="invalid">
-                  Must be under 70 characters
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Organizer Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  name="orgDesc"
-                  value={orgDesc}
-                  onChange={handleInputs}
                 />
               </Form.Group>
               <Form.Group>
@@ -424,8 +468,8 @@ function App() {
       <Row>
         <Col>
           {eventurl ? (
-            <Alert className="eventlist" variant="secondary">
-              <h4>List of Events</h4>
+            <Alert className="eventlist" variant="success">
+              <h6>List of Events</h6>
               <a href={eventurl}>{eventurl}</a>
             </Alert>
           ) : (

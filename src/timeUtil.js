@@ -68,7 +68,7 @@ export const appendTime = (date, timeString) => {
 };
 
 // sets the date of a Date object
-export const appendDate = (date, dateString) => {
+export const createDate = (date, dateString) => {
   let dateArray = dateString.split("-");
   let hours = date.getHours();
   let minutes = date.getMinutes();
@@ -92,4 +92,8 @@ export const parseDate = date => {
   let day = date.getDate().toString();
   day = day < 10 ? "0" + day : day;
   return `${year}-${month}-${day}`;
+};
+
+export const calcDuration = (start, end) => {
+  return (Date.parse(end) - Date.parse(start)) / 1000;
 };

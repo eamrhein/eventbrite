@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/eventbrite/static/css/main.b71d64b4.chunk.css",
+    "main.js": "/eventbrite/static/js/main.b10bc444.chunk.js",
+    "main.js.map": "/eventbrite/static/js/main.b10bc444.chunk.js.map",
+    "runtime-main.js": "/eventbrite/static/js/runtime-main.e330a47c.js",
+    "runtime-main.js.map": "/eventbrite/static/js/runtime-main.e330a47c.js.map",
+    "static/css/2.f76af334.chunk.css": "/eventbrite/static/css/2.f76af334.chunk.css",
+    "static/js/2.32c2d2f8.chunk.js": "/eventbrite/static/js/2.32c2d2f8.chunk.js",
+    "static/js/2.32c2d2f8.chunk.js.map": "/eventbrite/static/js/2.32c2d2f8.chunk.js.map",
+    "index.html": "/eventbrite/index.html",
+    "precache-manifest.acafa071abb68d56d4772648e98b2ac3.js": "/eventbrite/precache-manifest.acafa071abb68d56d4772648e98b2ac3.js",
+    "service-worker.js": "/eventbrite/service-worker.js",
+    "static/css/2.f76af334.chunk.css.map": "/eventbrite/static/css/2.f76af334.chunk.css.map",
+    "static/css/main.b71d64b4.chunk.css.map": "/eventbrite/static/css/main.b71d64b4.chunk.css.map",
+    "static/js/2.32c2d2f8.chunk.js.LICENSE": "/eventbrite/static/js/2.32c2d2f8.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e330a47c.js",
+    "static/css/2.f76af334.chunk.css",
+    "static/js/2.32c2d2f8.chunk.js",
+    "static/css/main.b71d64b4.chunk.css",
+    "static/js/main.b10bc444.chunk.js"
+  ]
+}

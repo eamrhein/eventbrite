@@ -67,6 +67,7 @@ function App() {
     }
     return dates.length;
   };
+
   //input handler validates and sets inputs on change
   // switch statement based on the name of the element
   const handleInputs = e => {
@@ -159,14 +160,15 @@ function App() {
         description,
         dateStartEndTime,
         dateEnd,
-        imgid
+        imgid,
+        occurences > 1
       );
       try {
         apiutil
           .createEvent(eventPackage)
           .then(res => {
             setEventurl(res.url);
-            console.log(res)
+            console.log(res);
             return res;
           })
           .then(parent => {

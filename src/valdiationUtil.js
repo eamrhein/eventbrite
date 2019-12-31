@@ -39,7 +39,14 @@ export const validationSchema = {
   }
 };
 
-export const parseEvent = (title, desc, dateStart, dateEnd, imgid) => ({
+export const parseEvent = (
+  title,
+  desc,
+  dateStart,
+  dateEnd,
+  imgid,
+  is_series
+) => ({
   event: {
     name: {
       html: title
@@ -57,6 +64,6 @@ export const parseEvent = (title, desc, dateStart, dateEnd, imgid) => ({
     },
     currency: "USD",
     logo_id: imgid,
-    is_series: true
+    is_series
   }
 });

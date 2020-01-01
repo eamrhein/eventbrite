@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/eventbrite/static/css/main.b71d64b4.chunk.css",
-    "main.js": "/eventbrite/static/js/main.16f21847.chunk.js",
-    "main.js.map": "/eventbrite/static/js/main.16f21847.chunk.js.map",
+    "main.css": "/eventbrite/static/css/main.32479651.chunk.css",
+    "main.js": "/eventbrite/static/js/main.71040439.chunk.js",
+    "main.js.map": "/eventbrite/static/js/main.71040439.chunk.js.map",
     "runtime-main.js": "/eventbrite/static/js/runtime-main.e330a47c.js",
     "runtime-main.js.map": "/eventbrite/static/js/runtime-main.e330a47c.js.map",
-    "static/css/2.f76af334.chunk.css": "/eventbrite/static/css/2.f76af334.chunk.css",
-    "static/js/2.32c2d2f8.chunk.js": "/eventbrite/static/js/2.32c2d2f8.chunk.js",
-    "static/js/2.32c2d2f8.chunk.js.map": "/eventbrite/static/js/2.32c2d2f8.chunk.js.map",
+    "static/css/2.b60ef663.chunk.css": "/eventbrite/static/css/2.b60ef663.chunk.css",
+    "static/js/2.26bbf683.chunk.js": "/eventbrite/static/js/2.26bbf683.chunk.js",
+    "static/js/2.26bbf683.chunk.js.map": "/eventbrite/static/js/2.26bbf683.chunk.js.map",
     "index.html": "/eventbrite/index.html",
-    "precache-manifest.8d2f8c6d8082e231195c285f215fd6e7.js": "/eventbrite/precache-manifest.8d2f8c6d8082e231195c285f215fd6e7.js",
+    "precache-manifest.c597fb602277cd288d3bfef2f4a05e7f.js": "/eventbrite/precache-manifest.c597fb602277cd288d3bfef2f4a05e7f.js",
     "service-worker.js": "/eventbrite/service-worker.js",
-    "static/css/2.f76af334.chunk.css.map": "/eventbrite/static/css/2.f76af334.chunk.css.map",
-    "static/css/main.b71d64b4.chunk.css.map": "/eventbrite/static/css/main.b71d64b4.chunk.css.map",
-    "static/js/2.32c2d2f8.chunk.js.LICENSE": "/eventbrite/static/js/2.32c2d2f8.chunk.js.LICENSE"
+    "static/css/2.b60ef663.chunk.css.map": "/eventbrite/static/css/2.b60ef663.chunk.css.map",
+    "static/css/main.32479651.chunk.css.map": "/eventbrite/static/css/main.32479651.chunk.css.map",
+    "static/js/2.26bbf683.chunk.js.LICENSE": "/eventbrite/static/js/2.26bbf683.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.e330a47c.js",
-    "static/css/2.f76af334.chunk.css",
-    "static/js/2.32c2d2f8.chunk.js",
-    "static/css/main.b71d64b4.chunk.css",
-    "static/js/main.16f21847.chunk.js"
+    "static/css/2.b60ef663.chunk.css",
+    "static/js/2.26bbf683.chunk.js",
+    "static/css/main.32479651.chunk.css",
+    "static/js/main.71040439.chunk.js"
   ]
 }

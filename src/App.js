@@ -13,6 +13,8 @@ import {
 import * as apiutil from "./apiutil";
 import * as timeUtil from "./timeUtil";
 import * as validationUtil from "./valdiationUtil";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function App() {
   // State Setters and getters
@@ -72,7 +74,6 @@ function App() {
   // switch statement based on the name of the element
   const handleInputs = e => {
     let time;
-    let days;
     let endtime;
     switch (e.target.name) {
       case "title":
@@ -107,24 +108,6 @@ function App() {
         setStartDateEndTime(endtime);
         setDuration(timeUtil.calcDuration(dateStart, endtime));
         break;
-      case "occursFrom":
-        time = timeUtil.createDate(dateStart, e.target.value);
-        validationUtil.isValidTime(time, dateEnd)
-          ? setValidity(true, "date")
-          : setValidity(false, "date");
-        setDateStart(time);
-        days = createDays(time, dateEnd);
-        setOccurences(days);
-        break;
-      case "occursUntil":
-        time = timeUtil.createDate(dateEnd, e.target.value);
-        validationUtil.isValidTime(dateStart, time)
-          ? setValidity(true, "date")
-          : setValidity(false, "date");
-        setDateEnd(time);
-        days = createDays(dateStart, time);
-        setOccurences(days);
-        break;
       case "description":
         setDescription(e.target.value);
         break;
@@ -139,6 +122,23 @@ function App() {
     }
   };
 
+  const handleFrom = date => {
+    validationUtil.isValidTime(date, dateEnd)
+      ? setValidity(true, "date")
+      : setValidity(false, "date");
+    setDateStart(date);
+    let days = createDays(date, dateEnd);
+    setOccurences(days);
+  };
+
+  const handleUntil = date => {
+    validationUtil.isValidTime(dateStart, date)
+      ? setValidity(true, "date")
+      : setValidity(false, "date");
+    setDateEnd(date);
+    let days = createDays(dateStart, date);
+    setOccurences(days);
+  };
   //Sumbit Handling
   // Check if form is valid
   // if not valid show error messages
@@ -215,6 +215,7 @@ function App() {
       });
     }
   };
+
   return (
     <main>
       <Container>
@@ -299,7 +300,7 @@ function App() {
                       {timeUtil.timeOfDay()}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
-                      Must be before end time.
+                      Must be Afer start time.
                     </Form.Control.Feedback>
                   </Col>
                 </Row>
@@ -318,38 +319,26 @@ function App() {
               <Form.Group>
                 <Row>
                   <Col>
-                    <Form.Label>Occurs From</Form.Label>
-                    <Form.Control
-                      name="occursFrom"
-                      type="date"
-                      min={timeUtil.parseDate(
-                        timeUtil.roundDate(new Date(), 0)
-                      )}
-                      onChange={handleInputs}
-                      value={timeUtil.parseDate(dateStart)}
+                    <p>Occurs From:</p>
+                    <DatePicker
+                      className="form-control"
+                      minDate={dateStart}
+                      onChange={handleFrom}
+                      selected={dateStart}
                       isInvalid={validationSchema.date.invalid}
                       isValid={validationSchema.date.valid}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Must be before end date.
-                    </Form.Control.Feedback>
                   </Col>
                   <Col>
-                    <Form.Label>Occurs Until</Form.Label>
-                    <Form.Control
-                      name="occursUntil"
-                      type="date"
-                      onChange={handleInputs}
-                      min={timeUtil.parseDate(
-                        timeUtil.roundDate(new Date(), 1)
-                      )}
-                      value={timeUtil.parseDate(dateEnd)}
+                    <p>Occurs Until</p>
+                    <DatePicker
+                      className="form-control"
+                      onChange={handleUntil}
+                      minDate={dateEnd}
+                      selected={dateEnd}
                       isInvalid={validationSchema.date.invalid}
                       isValid={validationSchema.date.valid}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Must be after start date.
-                    </Form.Control.Feedback>
                   </Col>
                 </Row>
                 <Row>
@@ -375,13 +364,13 @@ function App() {
                         type="file"
                         onChange={uploadBanner}
                         accept="image/png, image/jpeg"
-                        isInvalid={true}
+                        isInvalid={false}
                       />
                       <Form.Label htmlFor="file">
                         {imgurl ? (
                           <Image alt="banner" src={imgurl} fluid />
                         ) : (
-                          <div>
+                          <div className="default-img">
                             {" "}
                             <i className="fa fa-camera" />
                             <h6>Add Event Image</h6>

@@ -61,8 +61,8 @@ function App() {
   const createDays = (start, end) => {
     const dates = [];
     let curr = start;
-    const addDays = function (days) {
-      const date = new Date(this.valueOf());
+    const addDays = (days) => {
+      const date = new Date();
       date.setDate(date.getDate() + days);
       return date;
     };
@@ -80,33 +80,41 @@ function App() {
     let endtime;
     switch (e.target.name) {
       case 'title':
-        validationUtil.checkCharLimit(e.target.value, 70)
-        && e.target.value.length > 0
-          ? setValidity(true, 'title')
-          : setValidity(false, 'title');
+        if (validationUtil.checkCharLimit(e.target.value, 70)
+        && e.target.value.length > 0) {
+          setValidity(true, 'title');
+        } else {
+          setValidity(false, 'title');
+        }
         setTitle(e.target.value);
         break;
       case 'ticketName':
-        validationUtil.checkCharLimit(e.target.value, 70)
-        && e.target.value.length > 0
-          ? setValidity(true, 'ticketName')
-          : setValidity(false, 'ticketName');
+        if (validationUtil.checkCharLimit(e.target.value, 70)
+        && e.target.value.length > 0) {
+          setValidity(true, 'ticketName');
+        } else {
+          setValidity(false, 'ticketName');
+        }
         setTicketName(e.target.value);
         break;
       case 'from':
         time = timeUtil.appendTime(dateStart, e.target.value);
-        validationUtil.isValidTime(time, dateEnd)
-          ? setValidity(true, 'date')
-          : setValidity(false, 'date');
+        if (validationUtil.isValidTime(time, dateEnd)) {
+          setValidity(true, 'date');
+        } else {
+          setValidity(false, 'date');
+        }
         setDateStart(time);
         setDuration(timeUtil.calcDuration(time, dateStartEndTime));
         break;
       case 'to':
         time = timeUtil.appendTime(dateEnd, e.target.value);
         endtime = timeUtil.appendTime(dateStartEndTime, e.target.value);
-        validationUtil.isValidTime(dateStart, time)
-          ? setValidity(true, 'date')
-          : setValidity(false, 'date');
+        if (validationUtil.isValidTime(dateStart, time)) {
+          setValidity(true, 'date');
+        } else {
+          setValidity(false, 'date');
+        }
         setDateEnd(time);
         setStartDateEndTime(endtime);
         setDuration(timeUtil.calcDuration(dateStart, endtime));
@@ -118,8 +126,7 @@ function App() {
         setNumberOfTickets(e.target.value);
         break;
       case 'price':
-        const price = e.target.value;
-        setPrice(price);
+        setPrice(e.target.value);
         break;
       default:
         break;
@@ -127,18 +134,22 @@ function App() {
   };
 
   const handleFrom = (date) => {
-    validationUtil.isValidTime(date, dateEnd)
-      ? setValidity(true, 'date')
-      : setValidity(false, 'date');
+    if (validationUtil.isValidTime(date, dateEnd)) {
+      setValidity(true, 'date');
+    } else {
+      setValidity(false, 'date');
+    }
     setDateStart(date);
     const days = createDays(date, dateEnd);
     setOccurences(days);
   };
 
   const handleUntil = (date) => {
-    validationUtil.isValidTime(dateStart, date)
-      ? setValidity(true, 'date')
-      : setValidity(false, 'date');
+    if (validationUtil.isValidTime(dateStart, date)) {
+      setValidity(true, 'date');
+    } else {
+      setValidity(false, 'date');
+    }
     setDateEnd(date);
     const days = createDays(dateStart, date);
     setOccurences(days);

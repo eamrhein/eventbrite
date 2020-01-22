@@ -1,42 +1,40 @@
-export const isValidTime = (start, end) => {
-  return Date.parse(start) >= Date.parse(end) ? false : true;
-};
+export const isValidTime = (start, end) => (!(Date.parse(start) >= Date.parse(end)));
 
 export const checkCharLimit = (str, limit) => {
   if (str.length <= limit) {
     return true;
-  } else return false;
+  } return false;
 };
 
 export const validationSchema = {
   title: {
     valid: null,
-    invalid: null
+    invalid: null,
   },
   date: {
     valid: null,
-    invalid: null
+    invalid: null,
   },
   image: {
     valid: null,
-    invalid: null
+    invalid: null,
   },
   organizer: {
     valid: null,
-    invalid: null
+    invalid: null,
   },
   ticketName: {
     valid: null,
-    invalid: null
+    invalid: null,
   },
   numberOfTickets: {
     valid: null,
-    invalid: null
+    invalid: null,
   },
   price: {
     valid: null,
-    invalid: null
-  }
+    invalid: null,
+  },
 };
 
 export const parseEvent = (
@@ -45,35 +43,34 @@ export const parseEvent = (
   dateStart,
   dateEnd,
   imgid,
-  is_series
+  is_series,
 ) => ({
   event: {
     name: {
-      html: title
+      html: title,
     },
     description: {
-      html: desc
+      html: desc,
     },
     start: {
-      timezone: "America/Los_Angeles",
-      utc: dateStart.toJSON().slice(0, 19) + "Z"
+      timezone: 'America/Los_Angeles',
+      utc: `${dateStart.toJSON().slice(0, 19)}Z`,
     },
     end: {
-      timezone: "America/Los_Angeles",
-      utc: dateEnd.toJSON().slice(0, 19) + "Z"
+      timezone: 'America/Los_Angeles',
+      utc: `${dateEnd.toJSON().slice(0, 19)}Z`,
     },
-    currency: "USD",
+    currency: 'USD',
     logo_id: imgid,
-    is_series
-  }
+    is_series,
+  },
 });
 
 export const parsePrice = (cost) => {
-  if (cost === "" || cost === 0) return 0
-  let priceArr = cost.split(".");
+  if (cost === '' || cost === 0) return 0;
+  const priceArr = cost.split('.');
   if (priceArr.length > 1) {
-    return priceArr.join("")
-  } else {
-    return (parseFloat(cost) * 100)
+    return priceArr.join('');
   }
-}
+  return (parseFloat(cost) * 100);
+};

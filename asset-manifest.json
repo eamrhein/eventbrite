@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/eventbrite/static/css/main.32479651.chunk.css",
-    "main.js": "/eventbrite/static/js/main.71040439.chunk.js",
-    "main.js.map": "/eventbrite/static/js/main.71040439.chunk.js.map",
+    "main.css": "/eventbrite/static/css/main.db2ea2af.chunk.css",
+    "main.js": "/eventbrite/static/js/main.356d994b.chunk.js",
+    "main.js.map": "/eventbrite/static/js/main.356d994b.chunk.js.map",
     "runtime-main.js": "/eventbrite/static/js/runtime-main.e330a47c.js",
     "runtime-main.js.map": "/eventbrite/static/js/runtime-main.e330a47c.js.map",
     "static/css/2.b60ef663.chunk.css": "/eventbrite/static/css/2.b60ef663.chunk.css",
-    "static/js/2.26bbf683.chunk.js": "/eventbrite/static/js/2.26bbf683.chunk.js",
-    "static/js/2.26bbf683.chunk.js.map": "/eventbrite/static/js/2.26bbf683.chunk.js.map",
+    "static/js/2.33a7f1fd.chunk.js": "/eventbrite/static/js/2.33a7f1fd.chunk.js",
+    "static/js/2.33a7f1fd.chunk.js.map": "/eventbrite/static/js/2.33a7f1fd.chunk.js.map",
     "index.html": "/eventbrite/index.html",
-    "precache-manifest.c597fb602277cd288d3bfef2f4a05e7f.js": "/eventbrite/precache-manifest.c597fb602277cd288d3bfef2f4a05e7f.js",
+    "precache-manifest.b89538afc08b479705c5c9eefe6da8f0.js": "/eventbrite/precache-manifest.b89538afc08b479705c5c9eefe6da8f0.js",
     "service-worker.js": "/eventbrite/service-worker.js",
     "static/css/2.b60ef663.chunk.css.map": "/eventbrite/static/css/2.b60ef663.chunk.css.map",
-    "static/css/main.32479651.chunk.css.map": "/eventbrite/static/css/main.32479651.chunk.css.map",
-    "static/js/2.26bbf683.chunk.js.LICENSE": "/eventbrite/static/js/2.26bbf683.chunk.js.LICENSE"
+    "static/css/main.db2ea2af.chunk.css.map": "/eventbrite/static/css/main.db2ea2af.chunk.css.map",
+    "static/js/2.33a7f1fd.chunk.js.LICENSE": "/eventbrite/static/js/2.33a7f1fd.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.e330a47c.js",
     "static/css/2.b60ef663.chunk.css",
-    "static/js/2.26bbf683.chunk.js",
-    "static/css/main.32479651.chunk.css",
-    "static/js/main.71040439.chunk.js"
+    "static/js/2.33a7f1fd.chunk.js",
+    "static/css/main.db2ea2af.chunk.css",
+    "static/js/main.356d994b.chunk.js"
   ]
 }

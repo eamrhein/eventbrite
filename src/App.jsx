@@ -197,6 +197,18 @@ function App() {
         .catch((error) => {
           setErr(err.concat([error.message]));
         });
+      setDateStart(timeUtil.roundDate(new Date(), 0));
+      setStartDateEndTime(timeUtil.roundDate(new Date(), 1));
+      setDateEnd(timeUtil.roundDate(new Date(), 1));
+      setOccurences(0);
+      setDuration(0);
+      setTitle('');
+      setDescription('');
+      setImgurl(null);
+      setImgid(null);
+      setTicketName('');
+      setNumberOfTickets(100);
+      setPrice('0.00');
     } else {
       setErr(err.concat(['Formdata is invalid']));
     }
@@ -238,11 +250,11 @@ function App() {
           </Col>
         </Row>
         <Form onSubmit={handleSubmit}>
-        <Row>
-          <Col>
-            <Card className="mt-3">
-              <Card.Header as="h5">Title</Card.Header>
-              <Card.Body>
+          <Row>
+            <Col>
+              <Card className="mt-3">
+                <Card.Header as="h5">Title</Card.Header>
+                <Card.Body>
                   <Form.Group>
                     <Form.Label>Title</Form.Label>
                     <Form.Control
@@ -263,15 +275,15 @@ function App() {
                       A Title is required
                     </Form.Control.Feedback>
                   </Form.Group>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card className="mt-3">
-              <Card.Header as="h5">Location</Card.Header>
-              <Card.Body>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Card className="mt-3">
+                <Card.Header as="h5">Location</Card.Header>
+                <Card.Body>
                   <Form.Group>
                     <Form.Group controlId="VenueName">
                       <Form.Control placeholder="Venue Name" />
@@ -306,15 +318,15 @@ function App() {
                       </Form.Group>
                     </Form.Row>
                   </Form.Group>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card className="mt-3">
-              <Card.Header as="h5">Schedule Dates</Card.Header>
-              <Card.Body>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Card className="mt-3">
+                <Card.Header as="h5">Schedule Dates</Card.Header>
+                <Card.Body>
                   <Form.Group>
                     <Row>
                       <Col>
@@ -415,15 +427,15 @@ function App() {
                       </Col>
                     </Row>
                   </Form.Group>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card className="mt-3">
-              <Card.Header as="h5">Event Image</Card.Header>
-              <Card.Body>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Card className="mt-3">
+                <Card.Header as="h5">Event Image</Card.Header>
+                <Card.Body>
                   <Form.Group>
                     <Form.Label>Event Image</Form.Label>
                     <Row>
@@ -459,15 +471,15 @@ function App() {
                       </Col>
                     </Row>
                   </Form.Group>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card className="mt-3">
-              <Card.Header as="h5">Description</Card.Header>
-              <Card.Body>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Card className="mt-3">
+                <Card.Header as="h5">Description</Card.Header>
+                <Card.Body>
                   <Form.Group>
                     <Form.Label>Event Description</Form.Label>
                     <Form.Control
@@ -478,15 +490,15 @@ function App() {
                       value={description}
                     />
                   </Form.Group>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card className="mt-3">
-              <Card.Header as="h5">Tickets</Card.Header>
-              <Card.Body>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Card className="mt-3">
+                <Card.Header as="h5">Tickets</Card.Header>
+                <Card.Body>
                   <Form.Group>
                     <Row>
                       <Col>
@@ -538,39 +550,39 @@ function App() {
                       </Col>
                     </Row>
                   </Form.Group>
-                <Row>
-                  <Col>
-                    {eventurl.length > 0 ? (
-                      <Alert className="eventlist" variant="success">
-                        <h6>Event URL</h6>
-                        {eventurl.map((url) => (
-                          <Row key={url}>
-                            <Col>
-                              <a rel="noopener noreferrer" target="_blank" href={url}>{url}</a>
-                            </Col>
-                          </Row>
-                        ))}
-                      </Alert>
-                    ) : (
-                      ''
-                    )}
-                    {err.length > 0 ? (
-                      <Alert className="eventlist" variant="danger">
-                        <h6>Error</h6>
-                        {err}
-                      </Alert>
-                    ) : (
-                      ''
-                    )}
-                  </Col>
-                </Row>
-                <Button variant="success" type="submit" size="lg">
+                  <Row>
+                    <Col>
+                      {eventurl.length > 0 ? (
+                        <Alert className="eventlist" variant="success">
+                          <h6>Event URL</h6>
+                          {eventurl.map((url) => (
+                            <Row key={url}>
+                              <Col>
+                                <a rel="noopener noreferrer" target="_blank" href={url}>{url}</a>
+                              </Col>
+                            </Row>
+                          ))}
+                        </Alert>
+                      ) : (
+                        ''
+                      )}
+                      {err.length > 0 ? (
+                        <Alert className="eventlist" variant="danger">
+                          <h6>Error</h6>
+                          {err}
+                        </Alert>
+                      ) : (
+                        ''
+                      )}
+                    </Col>
+                  </Row>
+                  <Button variant="success" type="submit" size="lg">
                   Create Event
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         </Form>
       </Container>
     </main>

@@ -1,12 +1,18 @@
 @import "../node_modules/bootstrap/dist/css/bootstrap.css";
 body {
-  background-color: lightsteelblue;
+  background-color: lightslategray;
 }
 main {
   border-radius: 0.5rem;
   padding: 2rem;
-  background-color: whitesmoke;
-  margin: 6rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70vw;
+}
+.title {
+  color: white;
+  text-shadow: 0px 3px 3px rgba(50, 50, 50, 0.8);
+  font-weight: 700;
 }
 .datetime {
   display: block;

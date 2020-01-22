@@ -67,3 +67,13 @@ export const parseEvent = (
     is_series
   }
 });
+
+export const parsePrice = (cost) => {
+  if (cost === "" || cost === 0) return 0
+  let priceArr = cost.split(".");
+  if (priceArr.length > 1) {
+    return priceArr.join("")
+  } else {
+    return (parseFloat(cost) * 100)
+  }
+}

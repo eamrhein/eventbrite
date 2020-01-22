@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c8ac53e85b7ee422b99556160cda0867",
+    "revision": "ddc94b59fcdf3a411847efc51f7be69f",
     "url": "/eventbrite/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/eventbrite/static/css/2.b60ef663.chunk.css"
   },
   {
-    "revision": "b99dc58d364232ffbb18",
+    "revision": "98514b9fe4b7b56777a3",
     "url": "/eventbrite/static/css/main.db2ea2af.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/eventbrite/static/js/2.33a7f1fd.chunk.js.LICENSE"
   },
   {
-    "revision": "b99dc58d364232ffbb18",
-    "url": "/eventbrite/static/js/main.8adc6503.chunk.js"
+    "revision": "98514b9fe4b7b56777a3",
+    "url": "/eventbrite/static/js/main.0fb958d9.chunk.js"
   },
   {
     "revision": "301f0b89acfb752d0b00",
